@@ -1,40 +1,33 @@
 <?php
 
+namespace Config;
+
 class Database {
     private static $instance = null;
-    private $pdo;
-
-    private function __construct($dsn, $username, $password) {
+    private $connection;
+    
+    private function __construct() {
+        $config = require_once 'config.php';
         try {
-            $this->pdo = new PDO($dsn, $username, $password);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            error_log("Database connection error: " . $e->getMessage());
-            throw new Exception("Database connection failed.");
+            $this->connection = new \PDO(
+                "pgsql:host={$config['host']};dbname={$config['database']}",
+                $config['username'],
+                $config['password']
+            );
+            $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        } catch(\PDOException $e) {
+            throw new \Exception("Connection failed: " . $e->getMessage());
         }
     }
-
-    public static function getInstance($dsn = null, $username = null, $password = null) {
+    
+    public static function getInstance() {
         if (self::$instance === null) {
-            $dsn = $dsn ?? 'mysql:host=localhost;dbname=music';
-            $username = $username ?? 'postgres';
-            $password = $password ?? 'Mahjoub@1230';
-            self::$instance = new Database($dsn, $username, $password);
+            self::$instance = new self();
         }
         return self::$instance;
     }
-
+    
     public function getConnection() {
-        return $this->pdo;
+        return $this->connection;
     }
 }
-
-try {
-    $db = Database::getInstance(); 
-    $pdo = $db->getConnection(); 
-
-    echo "Connection successful!";
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
-
