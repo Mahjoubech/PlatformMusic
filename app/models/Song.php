@@ -3,30 +3,22 @@ namespace App\Models;
 
 class Song {
     private $id;
-    private $title;
-    private $artist;
-    private $filePath;
+    private $name;
+    private $path;
+    private $categoryId;
+    private $albumId;
 
-    public function __construct($id, $title, $artist, $filePath) {
-        $this->id = $id;
-        $this->title = $title;
-        $this->artist = $artist;
-        $this->filePath = $filePath;
+    public function __construct(array $data = []) {
+        $this->id = $data['song_id'] ?? null;
+        $this->name = $data['name'] ?? '';
+        $this->path = $data['path'] ?? '';
+        $this->categoryId = $data['category_id'] ?? null;
+        $this->albumId = $data['album'] ?? null;
     }
 
-    public function getId() {
-        return $this->id;
-    }
-
-    public function getTitle() {
-        return $this->title;
-    }
-
-    public function getArtist() {
-        return $this->artist;
-    }
-
-    public function getFilePath() {
-        return $this->filePath;
-    }
+    public function getId() { return $this->id; }
+    public function getName() { return $this->name; }
+    public function getPath() { return $this->path; }
+    public function getCategoryId() { return $this->categoryId; }
+    public function getAlbumId() { return $this->albumId; }
 }
